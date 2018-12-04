@@ -9,7 +9,6 @@ Created on Sun Dec  2 17:53:05 2018
 
 import numpy
 
-
 x = int(input("Enter number x"))
 
 y = int(input("Enter number y"))
