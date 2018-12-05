@@ -142,6 +142,7 @@ def hangman(secret_word):
     num_of_letters = len(secret_word)
     guesses = 6
     guessed_list = []
+    warnings = 3
     
     
     print("Welcome to Hangman. Your word contains ", num_of_letters, " letters. You have ", guesses, " guesses remaining.")
@@ -150,7 +151,21 @@ def hangman(secret_word):
     while guesses > 0 and not is_word_guessed(secret_word, guessed_list):
         guessed_letter = input("Guess a letter: ")
         guesses -= 1
-        guessed_list.append(guessed_letter)
+        
+        if str.isalpha(guessed_letter):
+            str.lower(guessed_letter)
+            guessed_list.append(guessed_letter)
+        else:
+            if warnings > 0:
+                warnings -= 1
+                print("You can only input alphabet, and only what you haven't yet guessed. Here is a warning. You have ", warnings, " warnings left. After 3 warnings, you lose a guess.")
+            else:
+                guesses -= 1
+                print("you're out of warnings. Lose 1 guess.")
+                
+        
+        
+        
         remaining = get_available_letters(guessed_list)
         word = get_guessed_word(secret_word, guessed_list)
         
