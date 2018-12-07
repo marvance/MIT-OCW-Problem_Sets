@@ -16,7 +16,7 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    '*': 0, 'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
 
 # -----------------------------------
@@ -149,15 +149,18 @@ def deal_hand(n):
     hand={}
     num_vowels = int(math.ceil(n / 3))
 
-    for i in range(num_vowels):
+    for i in range(num_vowels-1):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
-    
+    hand.update({'*': 1})
+    print(hand)
     return hand
+
+deal_hand(7)
 
 #
 # Problem #2: Update a hand by removing letters
@@ -211,8 +214,19 @@ def is_valid_word(word, hand, word_list):
     """
     lowercase_word = word.lower()
     hand_copy = hand.copy()
+    possible_words = []
+    valid_words = []
     
-    if lowercase_word in word_list:
+    if '*' in lowercase_word:
+        for char in VOWELS:
+            temp_word = lowercase_word.replace('*', char)
+            possible_words.append(temp_word)      
+    
+    for word in possible_words:
+        if word in word_list:
+            valid_words.append(word)
+            
+    if len(valid_words) > 0 or not '*' in lowercase_word:   
         for char in lowercase_word:
             if hand_copy.get(char, 0) > 0:
                 hand_copy[char] -=1
@@ -221,6 +235,9 @@ def is_valid_word(word, hand, word_list):
         return True
     else:
         return False
+
+wlist = load_words()    
+is_valid_word('r*d', {'u': 1, 'i': 1, 'r': 1, 'd': 1, 'a': 2, '*': 1}, wlist)
 
 #
 # Problem #5: Playing a hand
