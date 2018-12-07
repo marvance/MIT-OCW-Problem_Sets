@@ -3,7 +3,7 @@
 # The 6.0001 Word Game
 # Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>
 #
-# Name          : <your name>
+# Name          : Margo
 # Collaborators : <your collaborators>
 # Time spent    : <total time>
 
@@ -157,10 +157,9 @@ def deal_hand(n):
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
     hand.update({'*': 1})
-    print(hand)
     return hand
 
-deal_hand(7)
+
 
 #
 # Problem #2: Update a hand by removing letters
@@ -291,7 +290,7 @@ def play_hand(hand, word_list):
     while len(hand) > 0:
     
         # Display the hand
-        print(hand)
+        print('Current hand: ', hand)
         # Ask user for input
         user_says = input('Enter word, or "!!" to indicate that you are finished: ')
         hand_length = calculate_handlen(hand)
@@ -318,16 +317,14 @@ def play_hand(hand, word_list):
                 print('That is not a valid word. Please choose another word.')
 
 
-    # Game is over (user entered '!!' or ran out of letters),
-    if user_says == '!!' or hand_length < 1:
-    # so tell user the total score
-        print('Ran out of letters. Total score: ', total_score, ' points')
+        # Game is over (user entered '!!' or ran out of letters),
+        if user_says == '!!' or hand_length < 1:
+        # so tell user the total score
+            print('Ran out of letters. Total score: ', total_score, ' points')
 
     # Return the total score as result of function
     return total_score
 
-wlist = load_words()    
-play_hand({'u': 1, 'i': 1, 'r': 1, 'd': 1, 'a': 2, '*': 1}, wlist)
 
 #
 # Problem #6: Playing a game
@@ -360,8 +357,23 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
+    hand_copy = hand.copy()
+    all_letters = CONSONANTS + VOWELS
+    letters_minus_hand = ""
     
-    pass  # TO DO... Remove this line when you implement this function
+    if letter in hand.keys():
+        for char in all_letters:
+            if char not in hand_copy.keys():
+                letters_minus_hand += char
+        new_letter = random.choice(letters_minus_hand)
+        hand_copy[new_letter] = hand_copy.pop(letter)
+        return hand_copy        
+                
+    
+    
+    
+    
+substitute_hand({'u': 1, 'i': 1, 'r': 1, 'd': 1, 'a': 2, '*': 1}, 'a')
        
     
 def play_game(word_list):
@@ -394,8 +406,63 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
+    game_score = 0
+    num_hands = int(input('Enter total number of hands: '))
+    substitutions_left = 1
+    replays_left = 1
+    hand_score = 0
+    replayed_hand_score = 0
     
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    
+    
+    for i in range(num_hands):
+        hand = deal_hand(HAND_SIZE)
+        num_hands -=1
+        print('Current hand: ', hand)
+        
+        while len(hand) > 0:
+            
+
+        
+            if substitutions_left > 0:
+                substitute = input('Would you like to substitute a letter?')
+                if substitute == 'yes':
+                    replaced_letter = input('Which letter would you like to replace: ')
+                    hand = substitute_hand(hand, replaced_letter)
+                else:
+                    hand_score = play_hand(hand, word_list)
+           
+             
+            
+            if replays_left > 0:
+                replay = input('Would you like to replay the hand?')
+                if replay == 'yes':
+                    replayed_hand_score = play_hand(hand, word_list)
+                else:
+                    hand = deal_hand(HAND_SIZE)
+                    num_hands -=1
+                    print('Current hand: ', hand)
+                    hand_score = play_hand(hand, word_list)
+            if hand_score > replayed_hand_score:
+                game_score += hand_score
+            else:
+                game_score += replayed_hand_score
+            
+            if len(hand) == 0:
+                print('Ran out of letters. Total score: ', game_score, ' points')
+                return False
+            
+    
+    
+    
+    #get_word_score(word, n)
+    print('Game over. Your final score is: ', game_score)
+    return game_score
+        
+        
+        
+        
+
     
 
 
