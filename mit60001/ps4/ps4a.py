@@ -22,21 +22,34 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
+    #change value to true to test top solution
+    use_top_solution = False
     
-    if len(sequence) == 1:
-        return sequence[0]
-    else:
-        permutations = []
-        first_char = sequence[0]
-        remaining_chars = sequence[1:]
-        subsequence_permutations = get_permutations(remaining_chars)
-        for sub in subsequence_permutations:
-            for index in range(len(sub) +1):
-                new_sequence = sub[0:index] + first_char + sub[index:len(sub)+1]
-                permutations.append(new_sequence)
-        return permutations
+    if use_top_solution == True:
+    
+        if len(sequence) == 1:
+            return sequence[0]
+        else:
+            permutations = []
+            first_char = sequence[0]
+            remaining_chars = sequence[1:]
+            subsequence_permutations = get_permutations(remaining_chars)
+            for sub in subsequence_permutations:
+                for index in range(len(sub) +1):
+                    new_sequence = sub[0:index] + first_char + sub[index:len(sub)+1]
+                    permutations.append(new_sequence)
+            return permutations
         
-
+    else:
+        #More elegant solution:
+        if len(sequence) == 1:
+            return [sequence]
+        result = []
+        for i, let in enumerate(sequence):
+            for p in get_permutations(sequence[:i] + sequence[i + 1:]):
+                result = result + [let + p]
+        return result
+        
     
     
 
