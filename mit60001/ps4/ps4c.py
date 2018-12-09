@@ -70,7 +70,8 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
     
     def get_message_text(self):
         '''
@@ -78,7 +79,7 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +88,7 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words.copy()
                 
     def build_transpose_dict(self, vowels_permutation):
         '''
@@ -109,8 +110,24 @@ class SubMessage(object):
                  another letter (string). 
         '''
         
-        pass #delete this line and replace with your code here
-    
+        letter_dictionary = {}
+
+        punctuation = list(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
+
+        for i, char in enumerate(vowels_permutation.lower()):
+            letter_dictionary[VOWELS_LOWER[i]] = char
+        for i, char in enumerate(vowels_permutation.upper()):
+            letter_dictionary[VOWELS_UPPER[i]] = char
+        for char in CONSONANTS_LOWER:
+            letter_dictionary[char] = char
+        for char in CONSONANTS_UPPER:
+            letter_dictionary[char] = char
+        for symbol in punctuation:
+            letter_dictionary[symbol] = symbol
+        return letter_dictionary
+        
+        
+        
     def apply_transpose(self, transpose_dict):
         '''
         transpose_dict (dict): a transpose dictionary
@@ -119,7 +136,11 @@ class SubMessage(object):
         on the dictionary
         '''
         
-        pass #delete this line and replace with your code here
+        encrypted_message = []
+        for char in self.message_text:
+            encrypted_message.append(transpose_dict[char])
+        return ''.join(encrypted_message)
+        
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
@@ -132,7 +153,7 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        SubMessage.__init__(self, text)
 
     def decrypt_message(self):
         '''
