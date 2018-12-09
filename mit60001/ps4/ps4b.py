@@ -109,6 +109,7 @@ class Message(object):
         letter_dictionary = {}
         upper_alphabet = string.ascii_uppercase
         lower_alphabet = string.ascii_lowercase
+        punctuation = list(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
         max_index = 25
      
         for index, char in enumerate(upper_alphabet):
@@ -124,6 +125,8 @@ class Message(object):
                 letter_dictionary[char] = lower_alphabet[index]
             else:
                 letter_dictionary[char] = lower_alphabet[index+shift]
+        for symbol in punctuation:
+            letter_dictionary[symbol] = symbol
      
         return letter_dictionary
             
@@ -292,5 +295,6 @@ if __name__ == '__main__':
     print('Expected Output: frgh')
     print('Actual Output: ', mytext.get_message_text_encrypted())
     #TODO: best shift value and unencrypted story 
-    myciphertext = CiphertextMessage('frgh')
-    print('Best Shift: ', myciphertext.decrypt_message())
+    story = get_story_string()
+    myciphertext = CiphertextMessage(story)
+    print('Unencypted story:', myciphertext.decrypt_message())
