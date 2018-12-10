@@ -173,7 +173,72 @@ class EncryptedSubMessage(SubMessage):
         
         Hint: use your function from Part 4A
         '''
-        pass #delete this line and replace with your code here
+        #list of possible vowel transpositions from possible vowels permutations
+        tranpose_dict_list = []
+        #list of decrypted messages
+        de_message_list = []
+        #list of all permutations (letter orders) of aeiou
+        perm_list = get_permutations('aeiou')
+        #for each possible permutation
+        for perm in perm_list:
+            #add to trans_dict_list the dictionary that assigns
+            #transpositions according to the current permutation
+            tranpose_dict_list.append(self.build_transpose_dict(perm))
+        #for dictonary in list of possible transposition dictionaries
+        for dic in tranpose_dict_list:
+            #decrypted message equals text after you transpose it 
+            #with the current dictionary
+            de_message = self.apply_transpose(dic)
+            #append current decrypted message to list of decrypted messages
+            de_message_list.append(de_message)
+        #store True or False values when checking to see if
+        #a portion of the message is a real word
+        test = []
+        #store messages plus their number of True values from test[]
+        big_test = []
+        #get list of valid words to compare decrypted text to
+        word_list = self.get_valid_words()
+        #for message in list of decrypted messages
+        for mes in de_message_list:
+            #decrypted words equals each word in message separated
+            de_words = mes.split()
+            print("decrypted words: ", de_words)
+            #for each word in decrypted message
+            for word in de_words:
+                #check to see if it's a real word
+                if is_word(word_list, word):
+                    #if it is, append a value of True to list of 
+                    #"is it a word?" booleans
+                    test.append(1)
+                else:
+                    #if it's not, append a value of false
+                    test.append(0)
+            #append to list of _______ a tuple containing the total number of True values for 
+            #the current message in message list,
+            #plus the message itself
+            big_test.append((sum(test), mes))
+            print("big test: ",big_test)
+            #you're done using test, so delete all its contents
+            del test[0:len(test)]
+        #best choice is the maximum key in big_test
+        best_choice = max(big_test)
+        #store possible decrypted messages that might become result
+        possible_de_message = []
+        #for tuple in list of messages and number of True values
+        for tup in big_test:
+            #if the first tuple has the max number of True values
+            #and the second tuple is not already in possible decrypted messages
+            if tup[0] == best_choice[0] and tup[1] not in possible_de_message:
+                #add to possible decrypted messages the second tuple
+                possible_de_message.append(tup[1])
+        #initialize empty string to hold result
+        de_string = ''
+        #for message in possible results
+        for mes in possible_de_message:
+            #result equals current result, a comma to separate, and the message 
+            de_string = de_string + ', ' + mes
+            #return everything after the comma in result 
+        return de_string[1:]
     
 
 if __name__ == '__main__':

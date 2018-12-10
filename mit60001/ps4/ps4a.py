@@ -22,21 +22,45 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-
+    test_top = False
     
-    if len(sequence) == 1:
-        return sequence[0]
-    else:
-        permutations = []
-        first_char = sequence[0]
-        remaining_chars = sequence[1:]
-        subsequence_permutations = get_permutations(remaining_chars)
-        for sub in subsequence_permutations:
-            for index in range(len(sub) +1):
-                new_sequence = sub[0:index] + first_char + sub[index:len(sub)+1]
-                permutations.append(new_sequence)
-        return permutations
+    if test_top:
+
         
+        if len(sequence) == 1:
+            return sequence[0]
+        else:
+            permutations = []
+            first_char = sequence[0]
+            remaining_chars = sequence[1:]
+            subsequence_permutations = get_permutations(remaining_chars)
+            for sub in subsequence_permutations:
+                for index in range(len(sub) +1):
+                    new_sequence = sub[0:index] + first_char + sub[index:len(sub)+1]
+                    permutations.append(new_sequence)
+            return permutations
+    
+    else:
+    
+        #base case:
+        #if the length of sequence is 1, return only the sequence    
+        if len(sequence) == 1:
+            return [sequence]
+        #store all permutations
+        result = []
+        #iterate through sequence getting the character and its index
+        for i, let in enumerate(sequence):
+            #iterate through this function's return result 
+            #pass in as sequence: 
+            #slice of the beginning of sequence up to current index
+            #concatted to slice of one greater than current index to the end 
+            for p in get_permutations(sequence[:i] + sequence[i + 1:]):
+                #result equals current result plus
+                #an array containing current letter concatted to current 
+                #iteration of this function's return result
+                #WTF
+                result = result + [let + p]
+        return result
     
     
 

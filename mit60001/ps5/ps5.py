@@ -181,24 +181,51 @@ class DescriptionTrigger(PhraseTrigger):
 class TimeTrigger(Trigger):
     def __init__(self, pubtime):
         time_format = '%d %b %Y %H: %M: %S'
-        published_time = datetime.strptime(published_time, time_format)
-        published_time = published_time.replace(tzinfo=pytz.timezone("EST"))
-        self.published_time = published_time
+        pubtime = datetime.strptime(pubtime, time_format)
+        pubtime = pubtime.replace(tzinfo=pytz.timezone("EST"))
+        self.pubtime = pubtime
 
 # Problem 6
 # TODO: BeforeTrigger and AfterTrigger
+class BeforeTrigger(TimeTrigger):
+    def evaluate(self, story):
+        return self.pubtime > story.get_pubdate().replace(tzinfo=pytz.timezone("EST"))
 
+class AfterTrigger(TimeTrigger):
+    def evaluate(self, story):
+        return self.pubtime < story.get_pubdate().replace(tzinfo=pytz.timezone("EST"))
 
 # COMPOSITE TRIGGERS
 
 # Problem 7
 # TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        self.trig = trigger
+
+    def evaluate(self, story):
+        return not self.trig.evaluate(story)
 
 # Problem 8
 # TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trig1 = trigger1
+        self.trig2 = trigger2
+
+    def evaluate(self, story):
+        return self.trig1.evaluate(story) and self.trig2.evaluate(story)
 
 # Problem 9
 # TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trig1 = trigger1
+        self.trig2 = trigger2
+
+    def evaluate(self, story):
+        return self.trig1.evaluate(story) or self.trig2.evaluate(story)        
+
 
 
 #======================
@@ -215,7 +242,13 @@ def filter_stories(stories, triggerlist):
     # TODO: Problem 10
     # This is a placeholder
     # (we're just returning all the stories, with no filtering)
-    return stories
+    trig_stories = []
+    for story in stories:
+        for trig in triggerlist:
+            if trig.evaluate(story):
+                trig_stories.append(story)
+                break
+    return trig_stories
 
 
 
@@ -242,8 +275,26 @@ def read_trigger_config(filename):
     # TODO: Problem 11
     # line is the list of lines that you need to parse and for which you need
     # to build triggers
-
-    print(lines) # for now, print it so you see what it contains!
+    trig_dict = {}
+    trig_list = []
+    for i in range(len(lines)):
+        trig = lines[i].split(',')
+        if trig[1] == 'TITLE':
+            trig_dict[trig[0]] = TitleTrigger(trig[2])
+        elif trig[1] == 'DESCRIPTION':
+            trig_dict[trig[0]] = DescriptionTrigger(trig[2])
+        elif trig[1] == 'AFTER':
+            trig_dict[trig[0]] = AfterTrigger(trig[2])
+        elif trig[1] == 'BEFORE':
+            trig_dict[trig[0]] = BeforeTrigger(trig[2])
+        elif trig[1] == 'NOT':
+            trig_dict[trig[0]] = NotTrigger(trig[2])
+        elif trig[1] == 'AND':
+            trig_dict[trig[0]] = AndTrigger(trig_dict[trig[2]], trig_dict[trig[3]])
+        elif trig[0] == 'ADD':
+            for x in range(1, len(trig)):
+                trig_list.append(trig_dict[trig[x]])
+    return trig_list
 
 
 
@@ -262,6 +313,7 @@ def main_thread(master):
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
         # triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
